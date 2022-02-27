@@ -2,16 +2,51 @@
 #include"contact.h"
 
 //函数定义
-
+void check_cap(struct Contact* ps)
+{
+	if (ps->cap == ps->size)
+	{
+		printf("通讯录容量已满\n");
+		struct people* tmp = realloc(ps->p, (ps->cap + 2)*sizeof(struct people));
+		if (NULL == tmp)
+		{
+			printf("扩容失败\n");
+		}
+		else
+		{
+			ps->p = tmp;
+			ps->cap += 2;
+			printf("通讯录已完成扩容\n");
+		}
+	}
+}
 void init_Contact(struct Contact* ps)
 {
-	memset(ps->p, 0, sizeof(ps->p));
+	ps->p = malloc(3 * sizeof(struct people));
+	if (ps->p == NULL)
+	{
+		return;
+	}
 	ps->size = 0;
+	ps->cap = 3;//初始化3个通讯录容量
 }
 
 void AddContact(struct Contact* ps)
 {
-	if (ps->size == MAX)
+	check_cap(ps);
+	printf("请输入名字:>");
+	scanf("%s", ps->p[ps->size].name);
+	printf("请输入年龄:>");
+	scanf("%d", &(ps->p[ps->size].age));
+	printf("请输入性别:>");
+	scanf("%s", ps->p[ps->size].sex);
+	printf("请输入电话:>");
+	scanf("%s", ps->p[ps->size].tele);
+	printf("请输入地址:>");
+	scanf("%s", ps->p[ps->size].addr);
+	ps->size++;
+	printf("添加成功\n");
+	/*if (ps->size == MAX)
 	{
 		printf("通讯录已满\n");
 	}
@@ -29,7 +64,7 @@ void AddContact(struct Contact* ps)
 		scanf("%s", ps->p[ps->size].addr);
 		ps->size++;
 		printf("添加成功\n");
-	}
+	}*/
 }
 
 void ShowContact(const struct Contact* ps)

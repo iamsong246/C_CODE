@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-#define MAX 1000
+
 #define MAX_name 10
 #define MAX_sex 3
 #define MAX_tele 13
@@ -34,9 +34,11 @@ struct people
 struct Contact
 {
 	//信息
-	struct people p[MAX];
+	struct people* p;
 	//已添加信息的个数
 	int size;
+	//当前通讯录容量
+	int cap;
 };
 
 //函数声明

@@ -49,6 +49,9 @@ int main()
 			SortContact(&con);
 			break;
 		case Exit:
+			//释放内存
+			free(con.p);
+			con.p = NULL;
 			printf("退出程序\n");
 			break;
 		default:
@@ -56,6 +59,7 @@ int main()
 			break;
 		}
 	} while (input);
+	
 	return 0;
 }
 
