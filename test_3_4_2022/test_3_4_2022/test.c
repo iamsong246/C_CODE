@@ -50,12 +50,18 @@ void ClearList(struct S* ps)
 		ps->num = 0;
 	}
 }
-//将线性表ps中的第i个位置(默认从0开始)的元素值返回给e
+//将线性表ps中的第i个位置(默认从1开始)的元素值返回给e
 void GetList(struct S* ps, int i, int* e)
 {
-	*e = ps->pc[i];
+	if (0 == ps->num || i<1 || i>ps->num)
+	{
+		printf("查找的不符合或没有元素\n");
+		printf("%s\n", strerror(errno));
+		return;
+	}
+	*e = ps->pc[i-1];
 }
-//查找线性表ps中与给定e值相等的元素，如果查找成功返回该元素的序号（默认从0开始），失败返回-1
+//查找线性表ps中与给定e值相等的元素，如果查找成功返回该元素的位序，失败返回0
 int LocateList(struct S* ps,int e)
 {
 	int i = 0;
@@ -63,14 +69,21 @@ int LocateList(struct S* ps,int e)
 	{
 		if (e == ps->pc[i])
 		{
-			return i;
+			return i+1;
 		}
 	}
-	return -1;
+	return 0;
 }
 //在线性表中第i个位置插入新的元素e
 void ListInsert(struct S* ps, int i, int e)
 {
+	//插入位置不合理
+	if (i<1 || i>ps->num+1)
+	{
+		printf("插入的位置不合理\n");
+		printf("%s\n", strerror(errno));
+		return;
+	}
 	//判断扩容
 	if (ps->num + 1>ps->len)
 	{
@@ -78,29 +91,33 @@ void ListInsert(struct S* ps, int i, int e)
 		if (tmp != NULL)
 		{
 			ps->pc = tmp;
-			ps->len+=1;
+			ps->len++;
 			printf("扩容成功\n");
 		}
 	}
 	//线性表的数据从i开始往后挪
 	int j = 0;
-	for (j = 0 ;j<ps->num-i; j++)
+	for (j = 0 ;j<ps->num-i+1; j++)
 	{
 		ps->pc[ps->num-j] = ps->pc[ps->num-j-1];
 	}
 	
-	ps->pc[i] = e;
+	ps->pc[i-1] = e;
 	ps->num++;
 }
 //删除表中第i个位置的元素，并用e返回其值
 void ListDelete(struct S* ps, int i, int* e)
 {
-	*e = ps->pc[i];
+	if (i<1||i>ps->num)
+	printf("%s\n", strerror(errno));
+
+	*e = ps->pc[i-1];
 	int j = 0;
-	for (j = i ; j<ps->num; j++)
+	for (j = i-1 ; j<ps->num-1; j++)
 	{
 		ps->pc[j] = ps->pc[j + 1];
 	}
+	ps->num--;
 }
 //返回线性表的元素个数
 int Listlength(struct S* ps)
@@ -117,7 +134,12 @@ void ShowList(const struct S* ps)
 	}
 	printf("\n");
 }
-
+//销毁操作
+void DestroyList(int* ps)
+{
+	free(ps);
+	ps = NULL;
+}
 
 
 int main()
@@ -132,7 +154,7 @@ int main()
 	A.pc[2] = 3;
 	A.num = 3;
 	B.pc[0] = 10;
-	B.pc[1] = 3;
+	B.pc[1] = 5;
 	B.pc[2] = 3;
 
 	B.num = 3;
@@ -143,20 +165,18 @@ int main()
 	int len = Listlength(&B);
 	int i = 0;
 	int e = 0;
-	for (i = 0; i < len; i++)
+	for (i = 1; i < len+1; i++)
 	{
 		GetList(&B, i, &e);
 		int ret = LocateList(&A, e);
-		if (-1 == ret)
+		if (0 == ret)
 		{
 			ListInsert(&A, A.num, e);
 		}
 	}
 	ShowList(&A);
 	//释放内存
-	free(A.pc);
-	free(B.pc);
-	A.pc = NULL;
-	B.pc = NULL;
+	DestroyList(A.pc);
+	DestroyList(B.pc);
 	return 0;
 }
